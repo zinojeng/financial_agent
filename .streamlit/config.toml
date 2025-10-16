@@ -18,8 +18,8 @@ font = "sans serif"
 # Port configuration for deployment
 port = 8501
 
-# Enable CORS for API access
-enableCORS = false
+# Enable CORS for API access (must be true when XSRF protection is enabled)
+enableCORS = true
 
 # Enable XSRF protection
 enableXsrfProtection = true
@@ -33,9 +33,6 @@ headless = true
 [browser]
 # Tab title
 gatherUsageStats = false
-
-# Show error details in the browser
-showErrorDetails = false
 
 [client]
 # Show toolbar
