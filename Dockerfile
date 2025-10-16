@@ -19,11 +19,20 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the application code
 COPY . .
 
-# Expose the port Streamlit runs on
-EXPOSE 8501
+# Make the startup script executable
+RUN chmod +x start.sh
 
-# Health check
-HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
+# Set default port if not provided
+ENV PORT=8501
 
-# Run the application
-CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+# Expose the port (will use $PORT from environment)
+EXPOSE $PORT
+
+# Install curl for health check
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
+# Health check using environment port
+HEALTHCHECK CMD curl --fail http://localhost:$PORT/_stcore/health || exit 1
+
+# Run the application using the startup script
+CMD ["./start.sh"]

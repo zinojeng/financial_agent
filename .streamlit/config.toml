@@ -15,8 +15,7 @@ textColor = "#262730"
 font = "sans serif"
 
 [server]
-# Port configuration for deployment
-port = 8501
+# Port will be set via command line arguments
 
 # Enable CORS for API access (must be true when XSRF protection is enabled)
 enableCORS = true

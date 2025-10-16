@@ -3,7 +3,8 @@
     "type": "dockerfile",
     "dockerfile": "./Dockerfile"
   },
+  "expose": 8501,
   "env": {
-    "PORT": 8501
+    "PORT": "{{PORT}}"
   }
 }
