@@ -11,7 +11,7 @@ sys.path.insert(0, 'src')
 
 from dexter.agent import Agent
 from dexter.streamlit_ui import StreamlitUI
-from dexter.model import reset_llm
+from dexter.model import reset_llm, MODEL_PRICING
 import time
 
 # 設定頁面配置
@@ -33,6 +33,8 @@ if 'openai_api_key' not in st.session_state:
     st.session_state.openai_api_key = ""
 if 'financial_api_key' not in st.session_state:
     st.session_state.financial_api_key = ""
+if 'selected_model' not in st.session_state:
+    st.session_state.selected_model = "gpt-4o-mini"  # 預設使用較經濟的模型
 
 # 側邊欄 - API 金鑰設定
 with st.sidebar:
@@ -57,7 +59,40 @@ with st.sidebar:
         help="從 https://financialdatasets.ai 取得"
     )
 
-    # 儲存 API 金鑰按鈕
+    # 分隔線
+    st.divider()
+
+    # 模型選擇
+    st.subheader("🤖 AI 模型選擇")
+
+    # 模型選擇下拉選單
+    model_names = list(MODEL_PRICING.keys())
+    model_labels = [f"{MODEL_PRICING[m]['name']} ({m})" for m in model_names]
+
+    selected_index = model_names.index(st.session_state.selected_model)
+    selected_label = st.selectbox(
+        "選擇 OpenAI 模型",
+        options=model_labels,
+        index=selected_index,
+        help="不同模型有不同的價格和能力"
+    )
+
+    # 從標籤提取模型名稱
+    selected_model = model_names[model_labels.index(selected_label)]
+    st.session_state.selected_model = selected_model
+
+    # 顯示模型資訊
+    model_info = MODEL_PRICING[selected_model]
+    st.info(f"**{model_info['name']}**\n\n"
+           f"📝 {model_info['description']}\n\n"
+           f"💰 價格（每百萬 tokens）：\n"
+           f"• 輸入: ${model_info['input']:.2f}\n"
+           f"• 輸出: ${model_info['output']:.2f}")
+
+    # 價格參考連結
+    st.caption("[查看最新價格](https://platform.openai.com/docs/pricing)")
+
+    # 儲存設定按鈕
     if st.button("💾 儲存設定", use_container_width=True, type="primary"):
         if openai_key and financial_key:
             st.session_state.openai_api_key = openai_key
@@ -66,8 +101,9 @@ with st.sidebar:
             # 設定環境變數
             os.environ["OPENAI_API_KEY"] = openai_key
             os.environ["FINANCIAL_DATASETS_API_KEY"] = financial_key
+            os.environ["OPENAI_MODEL"] = st.session_state.selected_model
 
-            # 重置 LLM 實例以使用新的 API 金鑰
+            # 重置 LLM 實例以使用新的 API 金鑰和模型
             reset_llm()
 
             # 初始化 Agent 和 UI
@@ -75,10 +111,11 @@ with st.sidebar:
                 st.session_state.agent = Agent(
                     max_steps=20,
                     max_steps_per_task=5,
-                    use_chinese=True  # 使用繁體中文
+                    use_chinese=True,  # 使用繁體中文
+                    model_name=st.session_state.selected_model  # 傳遞選擇的模型
                 )
                 st.session_state.ui = StreamlitUI()
-                st.success("✅ API 金鑰設定成功！可以開始使用了。")
+                st.success(f"✅ 設定成功！使用模型: {MODEL_PRICING[st.session_state.selected_model]['name']}")
             except Exception as e:
                 st.error(f"❌ 初始化失敗: {str(e)}")
         else:

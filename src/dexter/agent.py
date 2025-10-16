@@ -16,12 +16,13 @@ from dexter.utils.ui import show_progress
 
 
 class Agent:
-    def __init__(self, max_steps: int = 20, max_steps_per_task: int = 5, use_chinese: bool = False, ui=None):
+    def __init__(self, max_steps: int = 20, max_steps_per_task: int = 5, use_chinese: bool = False, ui=None, model_name: str = None):
         self.logger = Logger()
         self.max_steps = max_steps            # global safety cap
         self.max_steps_per_task = max_steps_per_task
         self.use_chinese = use_chinese
         self.ui = ui  # Optional UI adapter (e.g., StreamlitUI)
+        self.model_name = model_name  # OpenAI model to use
 
         # Load Chinese prompts if needed
         if self.use_chinese:
@@ -63,7 +64,7 @@ class Agent:
 
         system_prompt = self.planning_prompt.format(tools=tool_descriptions)
         try:
-            response = call_llm(prompt, system_prompt=system_prompt, output_schema=TaskList)
+            response = call_llm(prompt, system_prompt=system_prompt, output_schema=TaskList, model_name=self.model_name)
             tasks = response.tasks
         except Exception as e:
             if not self.ui:
@@ -102,7 +103,7 @@ class Agent:
             Based on the task and the outputs, what should be the next step?
             """
         try:
-            return call_llm(prompt, system_prompt=self.action_prompt, tools=TOOLS)
+            return call_llm(prompt, system_prompt=self.action_prompt, tools=TOOLS, model_name=self.model_name)
         except Exception as e:
             if self.ui:
                 self.ui.show_error(f"獲取操作失敗: {e}" if self.use_chinese else f"ask_for_actions failed: {e}")
@@ -130,7 +131,7 @@ class Agent:
             Is the task done?
             """
         try:
-            resp = call_llm(prompt, system_prompt=self.validation_prompt, output_schema=IsDone)
+            resp = call_llm(prompt, system_prompt=self.validation_prompt, output_schema=IsDone, model_name=self.model_name)
             return resp.done
         except:
             return False
@@ -277,5 +278,5 @@ class Agent:
             Include specific numbers, calculations, and insights.
             """
 
-        answer_obj = call_llm(answer_prompt, system_prompt=self.answer_prompt, output_schema=Answer)
+        answer_obj = call_llm(answer_prompt, system_prompt=self.answer_prompt, output_schema=Answer, model_name=self.model_name)
         return answer_obj.answer
