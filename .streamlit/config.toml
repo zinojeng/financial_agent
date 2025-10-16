@@ -1,0 +1,42 @@
+[theme]
+# Primary color for interactive elements
+primaryColor = "#0066cc"
+
+# Background color for the main content area
+backgroundColor = "#ffffff"
+
+# Background color for sidebar and most interactive widgets
+secondaryBackgroundColor = "#f5f5f5"
+
+# Color used for almost all text
+textColor = "#262730"
+
+# Font family for all text
+font = "sans serif"
+
+[server]
+# Port configuration for deployment
+port = 8501
+
+# Enable CORS for API access
+enableCORS = false
+
+# Enable XSRF protection
+enableXsrfProtection = true
+
+# Max size for file uploads (in MB)
+maxUploadSize = 10
+
+# Headless mode for deployment
+headless = true
+
+[browser]
+# Tab title
+gatherUsageStats = false
+
+# Show error details in the browser
+showErrorDetails = false
+
+[client]
+# Show toolbar
+toolbarMode = "minimal"
