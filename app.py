@@ -11,6 +11,7 @@ sys.path.insert(0, 'src')
 
 from dexter.agent import Agent
 from dexter.streamlit_ui import StreamlitUI
+from dexter.model import reset_llm
 import time
 
 # 設定頁面配置
@@ -65,6 +66,9 @@ with st.sidebar:
             # 設定環境變數
             os.environ["OPENAI_API_KEY"] = openai_key
             os.environ["FINANCIAL_DATASETS_API_KEY"] = financial_key
+
+            # 重置 LLM 實例以使用新的 API 金鑰
+            reset_llm()
 
             # 初始化 Agent 和 UI
             try:
