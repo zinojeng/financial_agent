@@ -12,33 +12,14 @@ from dexter.prompts import DEFAULT_SYSTEM_PROMPT
 _llm = None
 _current_model = None
 
-# Model pricing information (as of 2024)
-MODEL_PRICING = {
-    "gpt-4o": {
-        "name": "GPT-4 Optimized",
-        "input": 2.50,  # per 1M tokens
-        "output": 10.00,  # per 1M tokens
-        "description": "最新、最快的 GPT-4 模型，適合複雜分析"
-    },
-    "gpt-4o-mini": {
-        "name": "GPT-4 Optimized Mini",
-        "input": 0.15,  # per 1M tokens
-        "output": 0.60,  # per 1M tokens
-        "description": "成本效益高的 GPT-4 模型，適合一般查詢"
-    },
-    "gpt-4-turbo": {
-        "name": "GPT-4 Turbo",
-        "input": 10.00,  # per 1M tokens
-        "output": 30.00,  # per 1M tokens
-        "description": "GPT-4 Turbo 視覺功能，適合需要最高準確度的任務"
-    },
-    "gpt-3.5-turbo": {
-        "name": "GPT-3.5 Turbo",
-        "input": 0.50,  # per 1M tokens
-        "output": 1.50,  # per 1M tokens
-        "description": "快速且經濟，適合簡單查詢"
-    }
-}
+# Available models
+AVAILABLE_MODELS = [
+    "gpt-5",
+    "gpt-5-mini",
+    "gpt-5-nano",
+    "gpt-4.1",
+    "gpt-4.1-mini"
+]
 
 def reset_llm():
     """Reset the LLM instance to force re-initialization with new API key or model."""
@@ -52,7 +33,7 @@ def get_llm(model_name=None):
 
     # Use environment variable or default if no model specified
     if model_name is None:
-        model_name = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+        model_name = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
 
     # Reset LLM if model changed
     if _current_model != model_name:

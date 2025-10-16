@@ -11,7 +11,7 @@ sys.path.insert(0, 'src')
 
 from dexter.agent import Agent
 from dexter.streamlit_ui import StreamlitUI
-from dexter.model import reset_llm, MODEL_PRICING
+from dexter.model import reset_llm, AVAILABLE_MODELS
 import time
 
 # 設定頁面配置
@@ -34,7 +34,7 @@ if 'openai_api_key' not in st.session_state:
 if 'financial_api_key' not in st.session_state:
     st.session_state.financial_api_key = ""
 if 'selected_model' not in st.session_state:
-    st.session_state.selected_model = "gpt-4o-mini"  # 預設使用較經濟的模型
+    st.session_state.selected_model = "gpt-4.1-mini"  # 預設模型
 
 # 側邊欄 - API 金鑰設定
 with st.sidebar:
@@ -66,31 +66,13 @@ with st.sidebar:
     st.subheader("🤖 AI 模型選擇")
 
     # 模型選擇下拉選單
-    model_names = list(MODEL_PRICING.keys())
-    model_labels = [f"{MODEL_PRICING[m]['name']} ({m})" for m in model_names]
-
-    selected_index = model_names.index(st.session_state.selected_model)
-    selected_label = st.selectbox(
+    selected_model = st.selectbox(
         "選擇 OpenAI 模型",
-        options=model_labels,
-        index=selected_index,
-        help="不同模型有不同的價格和能力"
+        options=AVAILABLE_MODELS,
+        index=AVAILABLE_MODELS.index(st.session_state.selected_model) if st.session_state.selected_model in AVAILABLE_MODELS else 0,
+        help="選擇要使用的 AI 模型"
     )
-
-    # 從標籤提取模型名稱
-    selected_model = model_names[model_labels.index(selected_label)]
     st.session_state.selected_model = selected_model
-
-    # 顯示模型資訊
-    model_info = MODEL_PRICING[selected_model]
-    st.info(f"**{model_info['name']}**\n\n"
-           f"📝 {model_info['description']}\n\n"
-           f"💰 價格（每百萬 tokens）：\n"
-           f"• 輸入: ${model_info['input']:.2f}\n"
-           f"• 輸出: ${model_info['output']:.2f}")
-
-    # 價格參考連結
-    st.caption("[查看最新價格](https://platform.openai.com/docs/pricing)")
 
     # 儲存設定按鈕
     if st.button("💾 儲存設定", use_container_width=True, type="primary"):
@@ -115,7 +97,7 @@ with st.sidebar:
                     model_name=st.session_state.selected_model  # 傳遞選擇的模型
                 )
                 st.session_state.ui = StreamlitUI()
-                st.success(f"✅ 設定成功！使用模型: {MODEL_PRICING[st.session_state.selected_model]['name']}")
+                st.success(f"✅ 設定成功！使用模型: {st.session_state.selected_model}")
             except Exception as e:
                 st.error(f"❌ 初始化失敗: {str(e)}")
         else:
