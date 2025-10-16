@@ -1,10 +1,7 @@
 {
   "build": {
-    "type": "python",
-    "python": "3.11"
-  },
-  "run": {
-    "command": "streamlit run app.py --server.port $PORT --server.address 0.0.0.0"
+    "type": "dockerfile",
+    "dockerfile": "./Dockerfile"
   },
   "env": {
     "PORT": 8501

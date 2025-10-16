@@ -1,11 +1,16 @@
 # Core dependencies
-streamlit>=1.31.0
+streamlit==1.31.0
 langchain>=0.3.27
 langchain-openai>=0.3.35
 openai>=2.2.0
 pydantic>=2.11.10
 python-dotenv>=1.1.1
 requests>=2.32.5
+
+# Pre-compiled wheels to avoid build issues
+# Using specific versions that have pre-built wheels
+pyarrow==14.0.1
+altair<5
 
 # Optional dependencies (for CLI version)
 # prompt-toolkit>=3.0.0
